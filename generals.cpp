@@ -44,7 +44,7 @@ void GeneralsGame::Init(int h, int w, int pl, int moun, int city,
 
     gnrs = GeneratePositions(pl);
     int now = MinDistance(gnrs);
-    for (int i = 0; i < 1 + pl * 2; i++) {
+    for (int i = 0; i < pl * 3; i++) {
       auto tmp = GeneratePositions(pl);
       int dis = MinDistance(tmp);
       if (dis <= 3) { i--; continue; }
@@ -55,8 +55,9 @@ void GeneralsGame::Init(int h, int w, int pl, int moun, int city,
   // Generate map
   std::fill_n(map_.begin(), moun,
       GeneralsCell(0, -1, GeneralsCell::kMountain));
-  std::fill_n(map_.begin() + moun, city,
-      GeneralsCell(irand(40, 50)(gen), -1, GeneralsCell::kCity));
+  for (int i = moun; i < moun + city; i++) {
+    map_[i] = GeneralsCell(irand(40, 50)(gen), -1, GeneralsCell::kCity);
+  }
   std::shuffle(map_.begin(), map_.end(), gen);
   for (int i = 0; i < pl; i++) {
     if (Pos_(gnrs[i]).type != GeneralsCell::kSpace) {

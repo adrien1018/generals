@@ -23,7 +23,7 @@ void Print(const GeneralsGame& g, T&& mp) {
         case GeneralsCell::kSpace: break;
         case GeneralsCell::kCity: cent = 11; own == -1 ? side = 11 : 0; break;
         case GeneralsCell::kGeneral: cent = 12; break;
-        case GeneralsCell::kGeneralCity: cent = 10; break;
+        case GeneralsCell::kGeneralCity: cent = 11; break;
         case GeneralsCell::kMountain: cent = side = 10; break;
         case GeneralsCell::kUnknown: // fall through
         case GeneralsCell::kUnknownMountain: cent = side = 12; break;
@@ -44,10 +44,10 @@ void Print(const GeneralsGame& g, T&& mp) {
     mvprintw(i + 1, g.Width() * 3 + 12, "%4d", stat[i].lands);
     attroff(COLOR_PAIR(i + 1 + out * 16));
     if (out) {
-      attron(COLOR_PAIR(12));
+      attron(COLOR_PAIR(13));
       mvaddch(i + 1, g.Width() * 3 + 1, ' ');
       mvaddch(i + 1, g.Width() * 3 + 2, ' ');
-      attroff(COLOR_PAIR(12));
+      attroff(COLOR_PAIR(13));
     }
   }
   refresh();
