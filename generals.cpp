@@ -22,19 +22,57 @@ void GeneralsGame::Init(int h, int w, int pl, int moun, int city,
   std::mt19937_64 gen(seed);
   typedef std::uniform_int_distribution<int> irand;
 
+  size_t N = (size_t)width_ * height_;
   std::vector<Position_> gnrs;
   { // Generals position
+    int mindist_bound;
+    {
+      int l = height_, r = width_;
+      if (l > r) std::swap(l, r);
+      int q = r / l;
+      if (q > players_) {
+        mindist_bound = r / players_;
+      } else {
+        int p = players_ / q;
+        int v = std::ceil(std::sqrt(p));
+        mindist_bound = l / (v - 0.5);
+      }
+      mindist_bound = mindist_bound * 0.9;
+    }
     auto Dist = [](const Position_& a, const Position_& b) {
       return std::abs(a.x - b.x) + std::abs(a.y - b.y);
     };
-    auto MinDistance = [&Dist](const std::vector<Position_>& p) {
-      int res = 1 << 30;
+    auto TerritoryDelta = [&](const std::vector<Position_>& p) {
+      int mindistance = 1 << 30;
       for (size_t i = 0; i < p.size(); i++) {
         for (size_t j = i + 1; j < p.size(); j++) {
-          res = std::min(res, Dist(p[i], p[j]));
+          mindistance = std::min(mindistance, Dist(p[i], p[j]));
         }
       }
-      return res;
+      if (mindistance < mindist_bound) return -1;
+
+      std::deque<std::pair<Position_, size_t>> que;
+      std::vector<int> num(p.size(), 0);
+      auto Push = [&](const Position_& x, size_t id) {
+        auto& now = Pos_(x);
+        if (now.flag) return;
+        num[id]++;
+        now.flag = 1;
+        que.emplace_back(x, id);
+      };
+      for (size_t i = 0; i < p.size(); i++) Push(p[i], i);
+      while (que.size()) {
+        Position_ x = que.front().first; size_t id = que.front().second;
+        que.pop_front();
+        if (x.x != 0) Push({x.x - 1, x.y}, id);
+        if (x.y != 0) Push({x.x, x.y - 1}, id);
+        if (x.x != height_ - 1) Push({x.x + 1, x.y}, id);
+        if (x.y != width_ - 1) Push({x.x, x.y + 1}, id);
+      }
+      for (size_t i = 0; i < N; i++) map_[i].flag = 0;
+      auto it = std::minmax_element(num.begin(), num.end());
+      int delta = *it.second - *it.first;
+      return delta;
     };
     auto GeneratePositions = [&](size_t N) {
       std::vector<Position_> ret;
@@ -42,13 +80,16 @@ void GeneralsGame::Init(int h, int w, int pl, int moun, int city,
       return ret;
     };
 
-    gnrs = GeneratePositions(pl);
-    int now = MinDistance(gnrs);
+    int now = -1;
+    while (now == -1) {
+      gnrs = GeneratePositions(pl);
+      now = TerritoryDelta(gnrs);
+    }
     for (int i = 0; i < pl * 3; i++) {
       auto tmp = GeneratePositions(pl);
-      int dis = MinDistance(tmp);
-      if (dis <= 3) { i--; continue; }
-      if (dis > now) now = dis, tmp.swap(gnrs);
+      int dis = TerritoryDelta(tmp);
+      if (dis == -1) { i--; continue; }
+      if (dis < now) now = dis, tmp.swap(gnrs);
     }
   }
 
@@ -70,7 +111,6 @@ void GeneralsGame::Init(int h, int w, int pl, int moun, int city,
     Pos_(gnrs[i]) = GeneralsCell(1, i, GeneralsCell::kGeneral);
   }
 
-  size_t N = (size_t)width_ * height_;
   { // Ensure connectivity between generals
     std::deque<Position_> stk1, stk2;
     int viscount = 1;
