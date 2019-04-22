@@ -58,11 +58,12 @@ class GeneralsGame {
   uint16_t height_, width_;
   int16_t players_, alivecount_;
   uint32_t rounds_;
+  uint8_t version_;
   GeneralsCell& Pos_(const Position_& i) { return map_[i.x * width_ + i.y]; }
   bool Visible_(const Position_&, int) const;
  public:
   GeneralsGame() : height_(0), width_(0), players_(0), alivecount_(0),
-      rounds_(0) {}
+      rounds_(0), version_(8) {}
 
   void Init(int, int, int, int, int, uint64_t = 0);
   void NextRound(const GeneralsMove*);

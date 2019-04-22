@@ -193,7 +193,14 @@ void GeneralsGame::NextRound(const GeneralsMove* mv) {
   size_t N = (size_t)width_ * height_;
 
   // Move troops / capture / change stats
-  for (int16_t i = 0; i < players_; i++) {
+  for (int16_t ti = 0; ti < players_; ti++) {
+    int16_t i;
+    switch (version_) {
+      case 0: case 2: i = ti; break;
+      case 3: i = (ti + rounds_) % players_; break;
+      case 4: i = players_ - ti - 1; break;
+      default: i = rounds_ & 1 ? players_ - ti - 1 : ti;
+    }
     if (!stat_[i].alive) continue;
 
     if (mv[i].x >= height_ || mv[i].y >= width_) continue;
