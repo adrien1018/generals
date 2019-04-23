@@ -56,13 +56,13 @@ void Print(const GeneralsGame& g, T&& mp) {
 void InitGeneralsColor() {
   start_color();
   init_color(16, 1000, 0, 0);
-  init_color(17, 0, 500, 0);
-  init_color(18, 0, 0, 1000);
-  init_color(19, 500, 0, 0);
+  init_color(17, 0, 0, 1000);
+  init_color(18, 0, 500, 0);
+  init_color(19, 500, 0, 500);
   init_color(20, 0, 500, 500);
-  init_color(21, 400, 600, 0);
-  init_color(22, 500, 0, 500);
-  init_color(23, 1000, 500, 0);
+  init_color(21, 0, 250, 0);
+  init_color(22, 1000, 500, 0);
+  init_color(23, 500, 0, 0);
   init_color(24, 750, 750, 750); // space
   init_color(25, 250, 250, 250); // obstacle
   init_color(26, 500, 500, 500); // city
