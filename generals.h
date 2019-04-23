@@ -65,7 +65,7 @@ class GeneralsGame {
   GeneralsGame() : height_(0), width_(0), players_(0), alivecount_(0),
       rounds_(0), version_(8) {}
 
-  void Init(int, int, int, int, int, uint64_t = 0);
+  void Init(int, int, int, int, int, uint64_t = 0, int = 8);
   void NextRound(const GeneralsMove*);
 
   size_t Height() const { return height_; }

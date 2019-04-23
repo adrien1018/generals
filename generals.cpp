@@ -4,7 +4,10 @@
 #include <random>
 
 void GeneralsGame::Init(int h, int w, int pl, int moun, int city,
-                        uint64_t seed) {
+                        uint64_t seed, int version) {
+  if (version != 0 && (version < 2 || version > 8)) version = 8;
+  version_ = version;
+
   // Adjust ranges
   height_ = h = std::min(std::max(h, 10), 10000);
   width_ = w = std::min(std::max(w, 10), 10000);
